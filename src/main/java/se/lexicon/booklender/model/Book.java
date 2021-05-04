@@ -1,4 +1,4 @@
-package se.lexicon.booklender;
+package se.lexicon.booklender.model;
 
 import lombok.Data;
 

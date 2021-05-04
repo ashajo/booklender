@@ -3,10 +3,10 @@ package se.lexicon.booklender.service;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import se.lexicon.booklender.Book;
 import se.lexicon.booklender.data.BookRepository;
 import se.lexicon.booklender.dto.BookDto;
 import se.lexicon.booklender.exception.DataNotFoundException;
+import se.lexicon.booklender.model.Book;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +63,7 @@ public class BookServiceImpl implements BookService{
         if (bookId <1)throw new IllegalArgumentException("The id is not valid");
 
         bookRepository.delete(modelMapper.map(bookRepository.findById(bookId)
-                .orElseThrow(()->new DataNotFoundException("Id ")),Book.class));
+                .orElseThrow(()->new DataNotFoundException("Id ")), Book.class));
     }
 
     @Override

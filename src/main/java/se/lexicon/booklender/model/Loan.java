@@ -1,8 +1,6 @@
 package se.lexicon.booklender.model;
 
 
-import se.lexicon.booklender.Book;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;

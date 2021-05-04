@@ -1,7 +1,7 @@
 package se.lexicon.booklender.data;
 
 import org.springframework.data.repository.CrudRepository;
-import se.lexicon.booklender.Book;
+import se.lexicon.booklender.model.Book;
 
 import java.util.List;
 

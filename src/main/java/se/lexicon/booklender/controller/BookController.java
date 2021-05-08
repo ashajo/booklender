@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import se.lexicon.booklender.dto.BookDto;
 import se.lexicon.booklender.exception.DataNotFoundException;
+import se.lexicon.booklender.exception.RecordNotFoundException;
 import se.lexicon.booklender.service.BookService;
 
 import java.util.List;
@@ -24,59 +25,40 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @GetMapping("/find")
-    public ResponseEntity<List<BookDto>> find(
-            @RequestParam(name = "type", defaultValue = ALL)final String type,
-            @RequestParam(name = "value", defaultValue = ALL)final String value){
-        switch (type.toUpperCase()){
-            case "TITLE":
-                return ResponseEntity.ok(bookService.findByTitle(value));
-            case "AVAILABLE":
-                return ResponseEntity.ok(bookService.findByAvailable(Boolean.parseBoolean(value)));
-            case "RESERVED":
-                return ResponseEntity.ok(bookService.findByReserved(Boolean.parseBoolean(value)));
-            case ALL:
-                if (bookService.findAll().isEmpty()) return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-                return ResponseEntity.ok(bookService.findAll());
-            default:
-                return ResponseEntity.badRequest().build();
-        }
+    @GetMapping
+    public ResponseEntity<List<BookDto>> find(){
+        return ResponseEntity.status(HttpStatus.OK).body(bookService.findAll());
+
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookDto> findById(@PathVariable("id")Integer bookId){
-        if(bookId <= 0) return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        try {
+    public ResponseEntity<BookDto> findById(@PathVariable("id")Integer bookId)throws RecordNotFoundException {
+
+        if(bookId == 0) return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
             return ResponseEntity.status(HttpStatus.OK).body(bookService.findById(bookId));
-        } catch (DataNotFoundException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-    }
 
     @Transactional
-    @PostMapping("/")
-    public ResponseEntity<BookDto> save(@RequestBody BookDto dto){
+    @PostMapping
+    public ResponseEntity<BookDto> save(@RequestBody  BookDto dto){
         if(dto == null)
             if (dto.getBookId() <= 0) return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         return ResponseEntity.status(HttpStatus.CREATED).body(bookService.create(dto));
     }
 
     @Transactional
-    @PutMapping("/")
-    public ResponseEntity<BookDto> update(@RequestBody BookDto dto){
+    @PutMapping
+    public ResponseEntity<BookDto> update(@RequestBody BookDto dto)throws RecordNotFoundException{
         if(dto != null)
-            if (dto.getBookId() < 1) return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(bookService.update(dto));
-        } catch (DataNotFoundException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+             {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-    }
+            return ResponseEntity.status(HttpStatus.OK).body(bookService.update(dto));
+        }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id")Integer id) throws DataNotFoundException {
+    public ResponseEntity<Void> delete(@PathVariable("id")Integer id) throws RecordNotFoundException {
 
         bookService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).build();

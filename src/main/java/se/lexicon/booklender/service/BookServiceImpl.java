@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import se.lexicon.booklender.data.BookRepository;
 import se.lexicon.booklender.dto.BookDto;
 import se.lexicon.booklender.exception.DataNotFoundException;
+import se.lexicon.booklender.exception.RecordNotFoundException;
 import se.lexicon.booklender.model.Book;
 
 import java.util.ArrayList;
@@ -30,24 +31,20 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public BookDto findById(int bookId) throws DataNotFoundException {
-        if (bookId == 0) throw new IllegalArgumentException("Id should not be empty");
+    public BookDto findById(int bookId) throws RecordNotFoundException {
 
         return modelMapper.map(bookRepository.findById(bookId)
-                .orElseThrow(() -> new DataNotFoundException("BookDto not found")),BookDto.class);
+                .orElseThrow(() -> new RecordNotFoundException("BookDto not found")),BookDto.class);
     }
 
     @Override
     public BookDto create(BookDto dto) {
 
-        if(dto == null) throw new IllegalArgumentException("BookDto not found");
-        if(dto.getBookId() != 0) throw new IllegalArgumentException("Id should be zero.");
-
         return modelMapper.map(bookRepository.save(modelMapper.map(dto, Book.class)),BookDto.class);
     }
 
     @Override
-    public BookDto update(BookDto dto) throws DataNotFoundException {
+    public BookDto update(BookDto dto) throws RecordNotFoundException{
         if (dto == null) throw new IllegalArgumentException("The dto object not found");
         if (dto.getBookId() < 1) throw new IllegalArgumentException("The BookDto is not valid");
 
@@ -55,15 +52,15 @@ public class BookServiceImpl implements BookService{
         if (bookOptional.isPresent()){
             return modelMapper.map(bookRepository.save(modelMapper.map(dto,Book.class)),BookDto.class);
         }
-        else throw new DataNotFoundException("BookDto");
+        else throw new RecordNotFoundException("BookDto");
     }
 
     @Override
-    public void delete(int bookId) throws DataNotFoundException { //changed delete return void as repository
+    public void delete(int bookId) throws RecordNotFoundException{
         if (bookId <1)throw new IllegalArgumentException("The id is not valid");
 
         bookRepository.delete(modelMapper.map(bookRepository.findById(bookId)
-                .orElseThrow(()->new DataNotFoundException("Id ")), Book.class));
+                .orElseThrow(()->new RecordNotFoundException("Id ")), Book.class));
     }
 
     @Override

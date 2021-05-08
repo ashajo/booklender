@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import se.lexicon.booklender.data.LibraryUserRepository;
 import se.lexicon.booklender.dto.LibraryUserDto;
 import se.lexicon.booklender.exception.DataNotFoundException;
+import se.lexicon.booklender.exception.RecordNotFoundException;
 import se.lexicon.booklender.model.LibraryUser;
 
 import java.util.ArrayList;
@@ -30,10 +31,10 @@ public class LibraryUserServiceImpl implements LibraryUserService {
     }
 
     @Override
-    public LibraryUserDto findById(int userId) throws DataNotFoundException {
+    public LibraryUserDto findById(int userId) throws RecordNotFoundException {
         if (userId == 0) throw new IllegalArgumentException("Id should not be empty");
         return modelMapper.map(libraryUserRepository.findById(userId)
-                .orElseThrow(() -> new DataNotFoundException("LibraryUserDto not found")), LibraryUserDto.class);
+                .orElseThrow(() -> new RecordNotFoundException("LibraryUserDto not found")), LibraryUserDto.class);
     }
 
     @Override
@@ -58,20 +59,20 @@ public class LibraryUserServiceImpl implements LibraryUserService {
     }
 
     @Override
-    public LibraryUserDto update(LibraryUserDto dto) throws DataNotFoundException {
+    public LibraryUserDto update(LibraryUserDto dto) throws RecordNotFoundException {
         if (dto == null) throw new IllegalArgumentException("The dto object not found");
         if (dto.getUserId() < 1) throw new IllegalArgumentException("LibraryUserDto is not valid");
         Optional<LibraryUser> bookOptional = libraryUserRepository.findById(modelMapper.map(dto, LibraryUser.class).getUserId());
         if (bookOptional.isPresent()) {
             return modelMapper.map(libraryUserRepository.save(modelMapper.map(dto, LibraryUser.class)), LibraryUserDto.class);
-        } else throw new DataNotFoundException("LibraryUserDto");
+        } else throw new RecordNotFoundException("LibraryUserDto");
     }
 
     @Override
-    public void delete(int userId) throws DataNotFoundException {
+    public void delete(int userId) throws RecordNotFoundException {
         if (userId < 1) throw new IllegalArgumentException("The id is not valid");
         libraryUserRepository.delete(modelMapper.map(libraryUserRepository.findById(userId)
-                .orElseThrow(() -> new DataNotFoundException("Id")), LibraryUser.class));
+                .orElseThrow(() -> new RecordNotFoundException("Id")), LibraryUser.class));
     }
 }
 

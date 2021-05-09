@@ -10,6 +10,7 @@ import se.lexicon.booklender.dto.BookDto;
 import se.lexicon.booklender.dto.LibraryUserDto;
 import se.lexicon.booklender.dto.LoanDto;
 import se.lexicon.booklender.exception.DataNotFoundException;
+import se.lexicon.booklender.exception.RecordNotFoundException;
 import se.lexicon.booklender.model.LibraryUser;
 import se.lexicon.booklender.model.Loan;
 
@@ -47,10 +48,10 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public LoanDto findById(long loanId) throws DataNotFoundException {
+    public LoanDto findById(long loanId) throws RecordNotFoundException {
         if (loanId == 0) throw new IllegalArgumentException("Id should not be empty");
         return modelMapper.map(loanRepository.findById(loanId)
-                .orElseThrow(() -> new DataNotFoundException("LoanDto not found")), LoanDto.class);
+                .orElseThrow(() -> new RecordNotFoundException("LoanDto not found")), LoanDto.class);
     }
 
     @Override
@@ -61,11 +62,11 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public LoanDto update(LoanDto dto) throws DataNotFoundException {
+    public LoanDto update(LoanDto dto) throws RecordNotFoundException {
         if (dto == null) throw new IllegalArgumentException("dto object not found");
         if (dto.getLoanId() < 1) throw new IllegalArgumentException("BookDto is not valid");
         return modelMapper.map(loanRepository.save(loanRepository.findById(modelMapper.map(dto, Loan.class).getLoanId())
-                .orElseThrow(() -> new DataNotFoundException("LoabDto"))), LoanDto.class);
+                .orElseThrow(() -> new RecordNotFoundException("LoabDto"))), LoanDto.class);
     }
 
     @Override
@@ -127,11 +128,11 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public void delete(long loanId) throws DataNotFoundException {
+    public void delete(long loanId) throws RecordNotFoundException {
         if (loanId < 1) throw new IllegalArgumentException("The id is not valid");
 
         loanRepository.delete(modelMapper.map(loanRepository.findById(loanId)
-                .orElseThrow(() -> new DataNotFoundException("Id ")), Loan.class));
+                .orElseThrow(() -> new RecordNotFoundException("Id ")), Loan.class));
     }
 }
 

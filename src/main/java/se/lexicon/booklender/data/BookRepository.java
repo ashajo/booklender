@@ -7,8 +7,8 @@ import java.util.List;
 
 public interface BookRepository extends CrudRepository<Book,Integer> {
 
-    List<Book>findByReservedIgnoreCase (boolean reserved);
-    List<Book>findByAvailableIgnoreCase(boolean available);
-    List<Book>findByTitleIgnoreCase(String title);
+    List<Book>findByReserved (boolean reserved);
+    List<Book>findByAvailable(boolean available);
+    List<Book>findByTitle(String title);
 
 }

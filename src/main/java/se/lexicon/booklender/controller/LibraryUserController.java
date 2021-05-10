@@ -13,7 +13,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/vi/LibraryUser")
+@RequestMapping("/api/v1/LibraryUser")
 public class LibraryUserController {
 
     LibraryUserService libraryUserService;
@@ -25,9 +25,7 @@ public class LibraryUserController {
 
     @GetMapping("/")
     public ResponseEntity<List<LibraryUserDto>> findAll(){
-        if (libraryUserService.findAll().isEmpty()) return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        else
-            return ResponseEntity.status(HttpStatus.FOUND).body(libraryUserService.findAll());
+            return ResponseEntity.status(HttpStatus.OK).body(libraryUserService.findAll());
     }
 
     @GetMapping("/{id}")
@@ -38,17 +36,15 @@ public class LibraryUserController {
         }
 
 
-    @GetMapping("/email/{email}")
-    public ResponseEntity<LibraryUserDto> findByEmail(@PathVariable("email") String email){
-        if(email.isEmpty()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    @GetMapping("/email")
+    public ResponseEntity<LibraryUserDto> findByEmail(@RequestParam(value = "email") String email){
         return ResponseEntity.status(HttpStatus.OK).body(libraryUserService.findByEmail(email));
     }
 
-    @Transactional
-    @PostMapping("/")
+
+    @PostMapping
     public ResponseEntity<LibraryUserDto> save(@RequestBody LibraryUserDto dto){
         if(dto == null) {
-            if (dto.getUserId() <= 0) return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(libraryUserService.create(dto));
     }
@@ -56,11 +52,12 @@ public class LibraryUserController {
 
     @PutMapping
     public ResponseEntity<LibraryUserDto> update(@RequestBody LibraryUserDto dto) throws RecordNotFoundException {
-        if(dto == null)
-            if (dto.getUserId() < 1) return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-
+        if (dto == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         return ResponseEntity.status(HttpStatus.OK).body(libraryUserService.update(dto));
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<LibraryUserDto> delete(@PathVariable("id")Integer id) throws RecordNotFoundException {

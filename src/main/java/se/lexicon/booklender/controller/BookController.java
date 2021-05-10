@@ -12,10 +12,9 @@ import se.lexicon.booklender.service.BookService;
 
 import java.util.List;
 
-import static org.springframework.web.cors.CorsConfiguration.ALL;
 
 @RestController
-@RequestMapping("/api/v1/book")
+@RequestMapping("/api/v1/book/")
 public class BookController {
 
     BookService bookService;
@@ -39,18 +38,16 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.OK).body(bookService.findById(bookId));
         }
 
-    @Transactional
     @PostMapping
     public ResponseEntity<BookDto> save(@RequestBody  BookDto dto){
         if(dto == null)
-            if (dto.getBookId() <= 0) return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         return ResponseEntity.status(HttpStatus.CREATED).body(bookService.create(dto));
     }
 
-    @Transactional
     @PutMapping
     public ResponseEntity<BookDto> update(@RequestBody BookDto dto)throws RecordNotFoundException{
-        if(dto != null)
+        if(dto == null)
              {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }

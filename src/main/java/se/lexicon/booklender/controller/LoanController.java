@@ -11,7 +11,7 @@ import se.lexicon.booklender.service.LoanService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/loan")
+@RequestMapping("/api/v1/loan/")
 public class LoanController {
     LoanService loanService;
 
@@ -19,6 +19,7 @@ public class LoanController {
     public void setLoanService(LoanService loanService) {
         this.loanService = loanService;
     }
+
     @GetMapping
     public ResponseEntity<List<LoanDto>>findAll(){
     return ResponseEntity.status(HttpStatus.OK).body(loanService.findAll());
